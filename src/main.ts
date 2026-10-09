@@ -2,6 +2,8 @@ import './style.css';
 import * as THREE from 'three';
 import Stats from "stats.js";
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import {encodePointCloud2} from "./fakeRobot.ts";
+import {parsePointCloud2} from "./pointcloud2.ts";
 
 // --- Renderer / camera / controls ---
 
@@ -42,6 +44,9 @@ for (let i = 0; i < GRID; i++) {
   }
 }
 
+const msg = encodePointCloud2(positions);
+const parsed = parsePointCloud2(msg);
+
 // --- Shader material: height color on GPU ---
 
 const material = new THREE.ShaderMaterial({
@@ -70,7 +75,7 @@ const material = new THREE.ShaderMaterial({
 });
 
 const geometry = new THREE.BufferGeometry();
-geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+geometry.setAttribute('position', new THREE.BufferAttribute(parsed, 3));
 scene.add(new THREE.Points(geometry, material));
 
 // --- Events / loop ---
